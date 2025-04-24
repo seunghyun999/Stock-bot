@@ -44,7 +44,12 @@ async def main():
     await application.initialize()
     await application.bot.set_webhook(WEBHOOK_URL)
     print(f"✅ Webhook 연결됨: {WEBHOOK_URL}")
-    app.run(host="0.0.0.0", port=PORT)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    import threading
+
+    # Flask는 메인 쓰레드에서 실행
+    threading.Thread(target=lambda: app.run(host="0.0.0.0", port=PORT)).start()
+
+    # 비동기로 Webhook 등록
+    asyncio.run(setup_webhook())
